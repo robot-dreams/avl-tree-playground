@@ -292,10 +292,12 @@ function deleteSelection() {
 
 const presets = [
   [4, 2, 1, 3, 6, 5, 7],
+  [3, 2, 1, 5, 4, 6, 7],
+  [3, 1, 2, 6, 5, 4, 7],
   [6, 4, 2, 5, 1, 3, 7],
-  [2, 1, 4, 3, 6, 5, 7],
   [6, 2, 1, 4, 3, 5, 7],
-  [2, 1, 6, 4, 3, 5, 7]
+  [1, 2, 3, 4, 5, 6, 7],
+  [4, 3, 2, 1, 5, 6, 7],
 ];
 
 function loadPreset(i) {
@@ -352,12 +354,14 @@ function handleKeyDown(e) {
         selection = selection.left || selection.right;
       }
       break;
-    case 48:
     case 49:
     case 50:
     case 51:
     case 52:
-      loadPreset(e.keyCode - 48);
+    case 53:
+    case 54:
+    case 55:
+      loadPreset(e.keyCode - 49);
       break;
     case 65:
       promptAndAdd();
