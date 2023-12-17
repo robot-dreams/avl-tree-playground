@@ -15,9 +15,11 @@ class Node {
     this.left = null;
     this.right = null;
     this.parent = null;
+    this.balanced = null;
+
+    // For drawing / animation
     this.row = null;
     this.col = null;
-    this.balanced = null;
   }
 }
 
