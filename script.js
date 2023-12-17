@@ -18,15 +18,73 @@ class Node {
     this.balanced = null;
 
     // For drawing / animation
+    this.old_row = null;
+    this.old_col = null;
     this.row = null;
     this.col = null;
   }
+
+  getRow() {
+    if (animating) {
+      return interpolate(this.old_row, this.row);
+    } else {
+      return this.row;
+    }
+  }
+
+  getCol() {
+    if (animating) {
+      return interpolate(this.old_col, this.col);
+    } else {
+      return this.col;
+    }
+  }
 }
+
+const DURATION = 200;
 
 // Global state
 let root = new Node(4);
 let selection = root;
 let size = 1;
+
+let animating = false;
+let startTs = null;
+let currTs = null;
+
+function startAnimation() {
+  calculateLayout();
+  animating = true;
+  startTs = currTs = document.timeline.currentTime;
+  requestAnimationFrame(animationStep);
+}
+
+function blend(t) {
+  if (t <= 0.5) {
+    return 2 * t * t;
+  } else {
+    return 1 - 2 * (1 - t) * (1 - t);
+  }
+}
+
+function interpolate(src, dst) {
+  let x = blend((currTs - startTs) / DURATION);
+  return (1 - x) * src + x * dst;
+}
+
+function animationStep(ts) {
+  if (ts - startTs > DURATION) {
+    animating = false;
+    startTs = null;
+    currTs = null;
+  } else {
+    currTs = ts;
+  }
+  draw();
+  if (animating) {
+    requestAnimationFrame(animationStep);
+  }
+}
 
 function addSVG(tag, attributes) {
   let elem = document.createElementNS(SVG_NS, tag);
@@ -52,7 +110,7 @@ function distance(x1, y1, x2, y2) {
 function findClicked(node, x, y) {
   if (node === null) return null;
 
-  let [cx, cy] = gridToCoords(node.row, node.col);
+  let [cx, cy] = gridToCoords(node.getRow(), node.getCol());
   let rect = SVG_ROOT.getBoundingClientRect();
   if (distance(cx, cy, x - rect.left, y - rect.top) <= NODE_RADIUS) {
     return node;
@@ -70,6 +128,8 @@ function positionWalk(node, row, col) {
   let lCount = positionWalk(node.left, row + 1, col);
   let rCount = positionWalk(node.right, row + 1, col + lCount + 1);
 
+  node.old_row = node.row;
+  node.old_col = node.col;
   node.row = row;
   node.col = col + lCount;
   return lCount + 1 + rCount;
@@ -88,8 +148,8 @@ function balanceWalk(node) {
 }
 
 function drawEdge(parent, child) {
-  let [x1, y1] = gridToCoords(parent.row, parent.col);
-  let [x2, y2] = gridToCoords(child.row, child.col);
+  let [x1, y1] = gridToCoords(parent.getRow(), parent.getCol());
+  let [x2, y2] = gridToCoords(child.getRow(), child.getCol());
   addSVG("line", { x1, y1, x2, y2 });
 }
 
@@ -105,7 +165,7 @@ function drawEdges(node) {
 }
 
 function drawNode(node) {
-  let [cx, cy] = gridToCoords(node.row, node.col);
+  let [cx, cy] = gridToCoords(node.getRow(), node.getCol());
   addSVG("circle", {
     class: node.balanced ? "node" : "imbalanced",
     cx,
@@ -144,11 +204,11 @@ function balanced(node) {
 }
 
 function drawSelection() {
-  let [cx, cy] = gridToCoords(selection.row, selection.col);
+  let [cx, cy] = gridToCoords(selection.getRow(), selection.getCol());
   addSVG("circle", { class: "selection", cx, cy, r: SELECTION_RADIUS });
 }
 
-function recalculate() {
+function calculateLayout() {
   positionWalk(root, 0, 0);
   balanceWalk(root);
 }
@@ -256,6 +316,7 @@ function loadPreset(i) {
   selection = root;
   size = 1;
   for (let j = 1; j < presets[i].length; j++) add(presets[i][j]);
+  calculateLayout();
 }
 
 /* Events */
@@ -264,7 +325,7 @@ function handleMouseDown(e) {
   let clickedNode = findClicked(root, e.pageX, e.pageY);
   if (clickedNode !== null) {
     selection = clickedNode;
-    draw(root, selection);
+    draw();
   }
 }
 
@@ -279,9 +340,11 @@ function handleKeyDown(e) {
       ) {
         selection = selection.parent;
       }
+      draw();
       break;
     case 38:
       if (selection.parent !== null) selection = selection.parent;
+      draw();
       break;
     case 39:
       if (selection.right !== null) {
@@ -292,6 +355,7 @@ function handleKeyDown(e) {
       ) {
         selection = selection.parent;
       }
+      draw();
       break;
     case 40:
       let children = 0;
@@ -304,6 +368,7 @@ function handleKeyDown(e) {
       if (children == 1) {
         selection = selection.left || selection.right;
       }
+      draw();
       break;
     case 49:
     case 50:
@@ -313,35 +378,34 @@ function handleKeyDown(e) {
     case 54:
     case 55:
       loadPreset(e.keyCode - 49);
+      draw();
       break;
     case 69:
       selection = rotateCCW(selection);
       if (selection.parent === null) root = selection;
+      startAnimation();
       break;
     case 81:
       selection = rotateCW(selection);
       if (selection.parent === null) root = selection;
+      startAnimation();
       break;
     default:
       break;
   }
-  // TODO: Only re-draw when there was a change?
-  recalculate();
-  draw(root, selection);
 }
 
 document.addEventListener("keydown", handleKeyDown);
 document.addEventListener("mousedown", handleMouseDown);
 
 window.onresize = () => {
-  draw(root, selection);
+  draw();
 };
 
 /* Initialization */
 
 document.body.onload = () => {
   loadPreset(0);
-  recalculate();
-  draw(root, selection);
+  draw();
   SVG_ROOT.focus();
 };
