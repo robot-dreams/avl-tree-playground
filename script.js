@@ -146,11 +146,14 @@ function drawSelection() {
   addSVG("circle", { class: "selection", cx, cy, r: SELECTION_RADIUS });
 }
 
+function recalculate() {
+  positionWalk(root, 0, 0);
+  balanceWalk(root);
+}
+
 function draw() {
   for (let i = SVG_ROOT.children.length - 1; i >= 0; i--)
     SVG_ROOT.children[i].remove();
-  positionWalk(root, 0, 0);
-  balanceWalk(root);
   drawEdges(root);
   drawSelection();
 
@@ -381,6 +384,7 @@ function handleKeyDown(e) {
       break;
   }
   // TODO: Only re-draw when there was a change?
+  recalculate();
   draw(root, selection);
 }
 
@@ -395,6 +399,7 @@ window.onresize = () => {
 
 document.body.onload = () => {
   loadPreset(0);
+  recalculate();
   draw(root, selection);
   SVG_ROOT.focus();
 };
