@@ -238,7 +238,7 @@ function add(value) {
 }
 
 function promptAndAdd() {
-  let input = prompt("value to add?");
+  let input = prompt("value to add (integer between -99 and 99)?");
   if (input === null || input.trim() === "") return;
 
   let value = parseInt(input);
@@ -247,7 +247,7 @@ function promptAndAdd() {
     return;
   }
   if (value < -99 || value > 99) {
-    alert(`${value} is out of range; must be in [-99, 99]`);
+    alert(`${value} is out of range (must be between -99 and 99)`);
     return;
   }
 
