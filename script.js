@@ -239,59 +239,6 @@ function add(value) {
   return addRecursive(root, value);
 }
 
-function promptAndAdd() {
-  let input = prompt("value to add (integer between -99 and 99)?");
-  if (input === null || input.trim() === "") return;
-
-  let value = parseInt(input);
-  if (isNaN(value) || value.toString() != input) {
-    alert(`"${input}" is not an integer`);
-    return;
-  }
-  if (value < -99 || value > 99) {
-    alert(`${value} is out of range (must be between -99 and 99)`);
-    return;
-  }
-
-  selection = add(value);
-}
-
-// Preconditions
-// - node !== null
-// - size > 1
-function deleteRecursive(node) {
-  if (node.left === null && node.right === null) {
-    replaceChild(node.parent, node, null);
-    return node.parent;
-  } else if (node.left === null) {
-    replaceChild(node.parent, node, node.right);
-    return node.right;
-  } else if (node.right === null) {
-    replaceChild(node.parent, node, node.left);
-    return node.left;
-  } else {
-    // node.left !== null && node.right !== null
-    let successor = node.left;
-    while (successor.right !== null) successor = successor.right;
-    node.value = successor.value;
-    deleteRecursive(successor);
-    return node;
-  }
-}
-
-function deleteSelection() {
-  if (size === 1) {
-    alert("can't delete last node in tree");
-    return;
-  }
-
-  let reroot = root === selection;
-  selection = deleteRecursive(selection);
-  if (reroot) root = selection;
-
-  size--;
-}
-
 const presets = [
   [4, 2, 1, 3, 6, 5, 7],
   [3, 2, 1, 5, 4, 6, 7],
@@ -364,12 +311,6 @@ function handleKeyDown(e) {
     case 54:
     case 55:
       loadPreset(e.keyCode - 49);
-      break;
-    case 65:
-      promptAndAdd();
-      break;
-    case 68:
-      deleteSelection();
       break;
     case 69:
       selection = rotateCCW(selection);
