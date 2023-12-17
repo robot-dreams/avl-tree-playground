@@ -36,21 +36,24 @@ svg:focus {
   outline: none;
 }
 
-span {
-  padding: 2px;
+.hint {
+  color: #666666;
 }
 
-#span-normal {
+#legend-normal {
+  padding: 2px;
   background: #cccccc;
 }
 
-#span-selected {
+#legend-selected {
+  padding: 2px;
   border-style: solid;
   border-color: #666666;
   border-width: 2px;
 }
 
-#span-imbalanced {
+#legend-imbalanced {
+  padding: 2px;
   background: #dd8888;
 }
 
