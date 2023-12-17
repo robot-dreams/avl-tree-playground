@@ -91,14 +91,14 @@ function drawEdge(row1, col1, row2, col2) {
   addSVG("line", { x1, y1, x2, y2 });
 }
 
-function renderEdges(node) {
+function drawEdges(node) {
   if (node.left !== null) {
     drawEdge(node.row, node.col, node.left.row, node.left.col);
-    renderEdges(node.left);
+    drawEdges(node.left);
   }
   if (node.right !== null) {
     drawEdge(node.row, node.col, node.right.row, node.right.col);
-    renderEdges(node.right);
+    drawEdges(node.right);
   }
 }
 
@@ -124,9 +124,9 @@ function drawImbalanced(row, col) {
   addSVG("circle", { class: "imbalanced", cx, cy, r: NODE_RADIUS });
 }
 
-function renderNodes(node) {
-  if (node.left != null) renderNodes(node.left);
-  if (node.right != null) renderNodes(node.right);
+function drawNodes(node) {
+  if (node.left != null) drawNodes(node.left);
+  if (node.right != null) drawNodes(node.right);
   // if (!node.balanced) drawImbalanced(node.row, node.col);
   drawNode(node.value, node.row, node.col, node.balanced);
 }
@@ -146,15 +146,15 @@ function drawSelection() {
   addSVG("circle", { class: "selection", cx, cy, r: SELECTION_RADIUS });
 }
 
-function render() {
+function draw() {
   for (let i = SVG_ROOT.children.length - 1; i >= 0; i--)
     SVG_ROOT.children[i].remove();
   positionWalk(root, 0, 0);
   balanceWalk(root);
-  renderEdges(root);
+  drawEdges(root);
   drawSelection();
 
-  renderNodes(root);
+  drawNodes(root);
 }
 
 /* Tree mutations */
@@ -313,7 +313,7 @@ function handleMouseDown(e) {
   let clickedNode = findClicked(root, e.pageX, e.pageY);
   if (clickedNode !== null) {
     selection = clickedNode;
-    render(root, selection);
+    draw(root, selection);
   }
 }
 
@@ -380,21 +380,21 @@ function handleKeyDown(e) {
     default:
       break;
   }
-  // TODO: Only re-render when there was a change?
-  render(root, selection);
+  // TODO: Only re-draw when there was a change?
+  draw(root, selection);
 }
 
 document.addEventListener("keydown", handleKeyDown);
 document.addEventListener("mousedown", handleMouseDown);
 
 window.onresize = () => {
-  render(root, selection);
+  draw(root, selection);
 };
 
 /* Initialization */
 
 document.body.onload = () => {
   loadPreset(0);
-  render(root, selection);
+  draw(root, selection);
   SVG_ROOT.focus();
 };
