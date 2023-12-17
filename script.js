@@ -156,7 +156,6 @@ function draw() {
     SVG_ROOT.children[i].remove();
   drawEdges(root);
   drawSelection();
-
   drawNodes(root);
 }
 
