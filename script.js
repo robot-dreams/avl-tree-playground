@@ -87,34 +87,34 @@ function balanceWalk(node) {
   return 1 + Math.max(l, r);
 }
 
-function drawEdge(row1, col1, row2, col2) {
-  let [x1, y1] = gridToCoords(row1, col1);
-  let [x2, y2] = gridToCoords(row2, col2);
+function drawEdge(parent, child) {
+  let [x1, y1] = gridToCoords(parent.row, parent.col);
+  let [x2, y2] = gridToCoords(child.row, child.col);
   addSVG("line", { x1, y1, x2, y2 });
 }
 
 function drawEdges(node) {
   if (node.left !== null) {
-    drawEdge(node.row, node.col, node.left.row, node.left.col);
+    drawEdge(node, node.left);
     drawEdges(node.left);
   }
   if (node.right !== null) {
-    drawEdge(node.row, node.col, node.right.row, node.right.col);
+    drawEdge(node, node.right);
     drawEdges(node.right);
   }
 }
 
-function drawNode(value, row, col, balanced) {
-  let [cx, cy] = gridToCoords(row, col);
+function drawNode(node) {
+  let [cx, cy] = gridToCoords(node.row, node.col);
   addSVG("circle", {
-    class: balanced ? "node" : "imbalanced",
+    class: node.balanced ? "node" : "imbalanced",
     cx,
     cy,
     r: NODE_RADIUS
   });
 
   let text = addSVG("text");
-  text.textContent = value;
+  text.textContent = node.value;
 
   let bBox = text.getBBox();
   text.setAttribute("x", cx - bBox.width / 2);
@@ -130,7 +130,7 @@ function drawNodes(node) {
   if (node.left != null) drawNodes(node.left);
   if (node.right != null) drawNodes(node.right);
   // if (!node.balanced) drawImbalanced(node.row, node.col);
-  drawNode(node.value, node.row, node.col, node.balanced);
+  drawNode(node);
 }
 
 function height(node) {
