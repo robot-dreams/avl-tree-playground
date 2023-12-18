@@ -243,7 +243,10 @@ function setRightChild(parent, child) {
 //   /  ->   \
 //  b         a
 function rotateCW(node) {
-  if (node.left === null) return node;
+  if (node.left === null) {
+    alert("can't rotate left without left child");
+    return node;
+  }
 
   let a = node;
   let b = node.left;
@@ -259,7 +262,10 @@ function rotateCW(node) {
 //   \  ->  /
 //    b    a
 function rotateCCW(node) {
-  if (node.right === null) return node;
+  if (node.right === null) {
+    alert("can't rotate right without right child");
+    return node;
+  }
 
   let a = node;
   let b = node.right;
@@ -388,41 +394,41 @@ function handleKeyDown(e) {
     case 37:
       if (selection.left !== null) {
         selection = selection.left;
+        draw();
       } else if (
         selection.parent !== null &&
         selection.parent.right == selection
       ) {
         selection = selection.parent;
+        draw();
       }
-      draw();
       break;
     case 38:
-      if (selection.parent !== null) selection = selection.parent;
-      draw();
+      if (selection.parent !== null) {
+        selection = selection.parent;
+        draw();
+      }
       break;
     case 39:
       if (selection.right !== null) {
         selection = selection.right;
+        draw();
       } else if (
         selection.parent !== null &&
         selection.parent.left == selection
       ) {
         selection = selection.parent;
+        draw();
       }
-      draw();
       break;
     case 40:
-      let children = 0;
       if (selection.left !== null) {
-        children++;
+        selection = selection.left;
+        draw();
+      } else if (selection.right !== null) {
+        selection = selection.right;
+        draw();
       }
-      if (selection.right !== null) {
-        children++;
-      }
-      if (children == 1) {
-        selection = selection.left || selection.right;
-      }
-      draw();
       break;
     case 49:
     case 50:
