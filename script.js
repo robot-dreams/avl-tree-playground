@@ -355,8 +355,9 @@ function deleteSelection() {
 }
 
 const presets = [
+  [2, 1, 3],
   [4, 2, 1, 3, 6, 5, 7],
-  [3, 2, 1, 5, 4, 6, 7],
+  [8, 4, 2, 1, 3, 6, 5, 7, 12, 10, 9, 11, 14, 13, 15],
   [3, 1, 2, 6, 5, 4, 7],
   [6, 4, 2, 5, 1, 3, 7],
   [6, 2, 1, 4, 3, 5, 7],
@@ -467,7 +468,7 @@ window.onresize = () => {
 /* Initialization */
 
 document.body.onload = () => {
-  loadPreset(0);
+  loadPreset(1);
   draw();
   SVG_ROOT.focus();
 };
