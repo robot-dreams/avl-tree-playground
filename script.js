@@ -41,7 +41,7 @@ class Node {
   }
 }
 
-const DURATION = 200;
+const DURATION = 250;
 
 // Global state
 let root = new Node(4);
@@ -59,16 +59,12 @@ function startAnimation() {
   requestAnimationFrame(animationStep);
 }
 
-function blend(t) {
-  if (t <= 0.5) {
-    return 2 * t * t;
-  } else {
-    return 1 - 2 * (1 - t) * (1 - t);
-  }
+function easeOutExpo(t) {
+  return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
 }
 
 function interpolate(src, dst) {
-  let x = blend((currTs - startTs) / DURATION);
+  let x = easeOutExpo((currTs - startTs) / DURATION);
   return (1 - x) * src + x * dst;
 }
 
