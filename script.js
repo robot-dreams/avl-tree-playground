@@ -4,7 +4,7 @@ const SVG_ROOT = document.getElementsByTagName("svg")[0];
 const SVG_TOP_PADDING = 100;
 
 const ROW_DELTA = 60;
-const COL_DELTA = 50;
+const COL_DELTA = 40;
 
 const NODE_RADIUS = 20;
 const SELECTION_RADIUS = 25;
@@ -41,7 +41,7 @@ class Node {
   }
 }
 
-const DURATION = 250;
+const DURATION = 400;
 
 // Global state
 let root = new Node(4);
