@@ -30,6 +30,7 @@ text {
 
 svg {
   flex-grow: 1;
+  height: 560px;
 }
 
 svg:focus {
