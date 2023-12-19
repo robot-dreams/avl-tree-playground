@@ -438,8 +438,10 @@ function handleKeyDown(e) {
     case 54:
     case 55:
     case 56:
-      loadPreset(e.keyCode - 49);
-      draw();
+      if (confirm("Load new tree (wipes out current tree)?")) {
+        loadPreset(e.keyCode - 49);
+        draw();
+      }
       break;
     case 65:
       promptAndAdd();
